@@ -1,0 +1,1 @@
+Use one primary button per view: the SVG download. Other exports and utilities use the default button. Fill is `field` with a 1px `line` border; primary is `accent` with `accent-ink` text. Corners use `radius-md`. Labels are Thai verbs in `button`. The consumer provides the label and the click handler. Do not put icons in buttons.

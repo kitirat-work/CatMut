@@ -1,0 +1,59 @@
+/* CatMut — generated from design-system/tokens.json. Do not edit; run `npm run tokens`. */
+:root {
+  color-scheme: light;
+  --bg: #e9e9e7;
+  --panel: #f4f4f1;
+  --field: #ffffff;
+  --ink: #1b1c1a;
+  --mute: #64675e;
+  --line: #d0d2cb;
+  --accent: #17795c;
+  --accent-ink: #ffffff;
+  --mat-green: #1c9272;
+  --mat-charcoal: #17181c;
+  --mat-grey: #d8d8d8;
+  --mat-plum: #382030;
+  --mat-periwinkle: #7c8db2;
+  --mat-ink-dark: #2b2926;
+  --mat-ink-light: #ffffff;
+  --shadow-mat: 0 1px 2px rgba(20,24,20,.10), 0 22px 44px -14px rgba(20,24,20,.30);
+  --font-ui: "IBM Plex Sans Thai", "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 18px;
+  --space-12: 48px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-pill: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #131411;
+    --panel: #1b1c19;
+    --field: #242521;
+    --ink: #ecece6;
+    --mute: #9b9e93;
+    --line: #32342e;
+    --accent: #4cc3a0;
+    --accent-ink: #0b1813;
+    --shadow-mat: 0 1px 2px rgba(0,0,0,.4), 0 22px 44px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #131411;
+  --panel: #1b1c19;
+  --field: #242521;
+  --ink: #ecece6;
+  --mute: #9b9e93;
+  --line: #32342e;
+  --accent: #4cc3a0;
+  --accent-ink: #0b1813;
+  --shadow-mat: 0 1px 2px rgba(0,0,0,.4), 0 22px 44px -14px rgba(0,0,0,.7);
+}
