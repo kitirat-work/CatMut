@@ -45,6 +45,17 @@ src/
 แก้ที่ `design-system/tokens.json` แล้วรัน `npm run tokens` เพื่อสร้าง `src/styles/tokens.css` ใหม่
 ธีมสว่าง/มืดตามระบบของผู้ใช้ และบังคับได้ด้วย `data-theme="light"` หรือ `data-theme="dark"` บน `<html>`
 
+## Deploy ขึ้น GitHub Pages
+
+```bash
+make deploy                        # หรือ ./scripts/deploy-pages.sh
+./scripts/deploy-pages.sh --no-push   # commit ไว้ในเครื่อง ยังไม่ push
+```
+
+script จะ build ด้วย base แบบ relative แล้วคัดลอก `dist/` ไปแทนที่โฟลเดอร์ `catmut/` ใน repo
+`kitirat-work.github.io` (ค่าเริ่มต้นอยู่ที่ `../kitirat-work.github.io` ถ้ายังไม่มีจะ clone ให้) จากนั้น commit และ push ขึ้น `main`
+เปลี่ยนค่าได้ด้วย env `PAGES_DIR`, `PAGES_REPO`, `PAGES_BRANCH`, `PAGES_SUBDIR`
+
 ## หมายเหตุ
 
 - ฟอนต์ Newsreader, IBM Plex Sans Thai และ IBM Plex Mono โหลดจาก Google Fonts ผ่าน `index.html` ต้องออนไลน์ถึงจะเห็นฟอนต์จริง

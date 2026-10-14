@@ -1,4 +1,4 @@
-.PHONY: install dev build preview typecheck tokens clean
+.PHONY: install dev build preview typecheck tokens clean deploy
 
 install:
 	npm install
@@ -20,3 +20,6 @@ tokens:
 
 clean:
 	rm -rf dist
+
+deploy:
+	./scripts/deploy-pages.sh
