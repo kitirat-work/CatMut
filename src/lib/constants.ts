@@ -14,6 +14,8 @@ export interface State {
   fibSide: 'left' | 'right';
   cw: number;
   ch: number;
+  safeTop: number;
+  safeBottom: number;
   cell: number;
   shadow: boolean;
   shadowAmt: number;
@@ -46,6 +48,8 @@ export const DEFAULT_STATE: State = {
   fibSide: 'left',
   cw: 2560,
   ch: 1600,
+  safeTop: 4.5,
+  safeBottom: 0,
   cell: 0.95,
   shadow: false,
   shadowAmt: 70,
@@ -104,6 +108,15 @@ export const SHADOWS: [ShadowStyle, string][] = [
   ['leaves', 'ใบไม้'],
   ['gradient', 'ไล่เฉด'],
 ];
+
+// Safe-area presets as % of the wallpaper height: [key, label, top, bottom].
+// MacBook: menu bar (taller on notched models). Phone: status bar/Dynamic Island and home indicator.
+export const SAFE_PRESETS: [string, string, number, number][] = [
+  ['none', 'ไม่เว้น', 0, 0],
+  ['mac', 'MacBook', 4.5, 0],
+  ['phone', 'มือถือ', 7, 4],
+];
+export const SAFE_MAX = 25;
 
 export const SIZE_LIMITS = { min: 200, max: 12000 };
 

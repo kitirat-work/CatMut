@@ -1,6 +1,6 @@
-import { RATIOS, SIZE_LIMITS, type SetState, type State } from '../../lib/constants';
+import { RATIOS, SAFE_MAX, SAFE_PRESETS, SIZE_LIMITS, type SetState, type State } from '../../lib/constants';
 import { knownRatio } from '../../lib/generator';
-import { Button, Chip, NumberField, Section } from '../ui';
+import { Button, Chip, NumberField, Section, Slider } from '../ui';
 
 export default function SizeSection({ S, set }: { S: State; set: SetState }) {
   const kr = knownRatio(S.cw, S.ch);
@@ -33,6 +33,33 @@ export default function SizeSection({ S, set }: { S: State; set: SetState }) {
       <p className="hint">
         {kr ? 'พิมพ์ตัวเลขเองได้ที่ช่องกว้าง × สูง' : 'ขนาดกำหนดเอง ไม่ตรงกับอัตราส่วนสำเร็จรูป'}
       </p>
+
+      <div className="chips" role="group" aria-label="พื้นที่ปลอดภัย">
+        {SAFE_PRESETS.map(([key, label, top, bottom]) => (
+          <Chip key={key} font="ui" pressed={S.safeTop === top && S.safeBottom === bottom} onClick={() => set({ safeTop: top, safeBottom: bottom })}>
+            {label}
+          </Chip>
+        ))}
+      </div>
+      <Slider
+        label="เว้นขอบบน"
+        min={0}
+        max={SAFE_MAX}
+        step={0.5}
+        value={S.safeTop}
+        onChange={(safeTop) => set({ safeTop })}
+        format={(v) => v + '% · ' + Math.round((S.ch * v) / 100) + ' px'}
+      />
+      <Slider
+        label="เว้นขอบล่าง"
+        min={0}
+        max={SAFE_MAX}
+        step={0.5}
+        value={S.safeBottom}
+        onChange={(safeBottom) => set({ safeBottom })}
+        format={(v) => v + '% · ' + Math.round((S.ch * v) / 100) + ' px'}
+      />
+      <p className="hint">เลื่อนลายแผ่นรองตัดให้พ้นแถบเมนูของ Mac หรือแถบสถานะและแถบโฮมของมือถือ พื้นหลังยังเต็มจอ</p>
     </Section>
   );
 }

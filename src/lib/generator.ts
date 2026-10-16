@@ -158,7 +158,9 @@ function shadowSVG(W: number, H: number, seed: number, amt: number, style: Shado
 
 export function build(S: State, opts?: { embed?: boolean; imports?: boolean }) {
   const W = S.cw, H = S.ch, b = Math.min(W, H), t = b / 1600;
-  const mx = 0.045 * b, tp = 0.06 * b, bt = 0.097 * b;
+  // safe area keeps the mat clear of the menu bar / status bar and home indicator; background still fills the whole screen
+  const sTop = H * (S.safeTop || 0) / 100, sBot = H * (S.safeBottom || 0) / 100;
+  const mx = 0.045 * b, tp = 0.06 * b + sTop, bt = 0.097 * b + sBot;
   const x0 = mx, y0 = tp, x1 = W - mx, y1 = H - bt, fw = x1 - x0, fh = y1 - y0;
   let cell = 0.153 * b * S.cell;
   cell = Math.min(cell, fw / 3, fh / 3);
