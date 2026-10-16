@@ -1,4 +1,4 @@
-import { RATIOS, SAFE_MAX, SAFE_PRESETS, SIZE_LIMITS, type SetState, type State } from '../../lib/constants';
+import { CORNER_MAX, CORNER_PRESETS, RATIOS, SAFE_MAX, SAFE_PRESETS, SIZE_LIMITS, type SetState, type State } from '../../lib/constants';
 import { knownRatio } from '../../lib/generator';
 import { Button, Chip, NumberField, Section, Slider } from '../ui';
 
@@ -60,6 +60,24 @@ export default function SizeSection({ S, set }: { S: State; set: SetState }) {
         format={(v) => v + '% · ' + Math.round((S.ch * v) / 100) + ' px'}
       />
       <p className="hint">เลื่อนลายแผ่นรองตัดให้พ้นแถบเมนูของ Mac หรือแถบสถานะและแถบโฮมของมือถือ พื้นหลังยังเต็มจอ</p>
+
+      <div className="chips" role="group" aria-label="มุมจอ">
+        {CORNER_PRESETS.map(([key, label, corner]) => (
+          <Chip key={key} font="ui" pressed={S.corner === corner} onClick={() => set({ corner })}>
+            {label}
+          </Chip>
+        ))}
+      </div>
+      <Slider
+        label="มุมโค้งตามจอ"
+        min={0}
+        max={CORNER_MAX}
+        step={0.5}
+        value={S.corner}
+        onChange={(corner) => set({ corner })}
+        format={(v) => v + '% · ' + Math.round((Math.min(S.cw, S.ch) * v) / 100) + ' px'}
+      />
+      <p className="hint">ใส่รัศมีมุมจอ กรอบและลายจะโค้งขนานไปกับขอบจอ</p>
     </Section>
   );
 }

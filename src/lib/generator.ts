@@ -162,6 +162,8 @@ export function build(S: State, opts?: { embed?: boolean; imports?: boolean }) {
   const sTop = H * (S.safeTop || 0) / 100, sBot = H * (S.safeBottom || 0) / 100;
   const mx = 0.045 * b, tp = 0.06 * b + sTop, bt = 0.097 * b + sBot;
   const x0 = mx, y0 = tp, x1 = W - mx, y1 = H - bt, fw = x1 - x0, fh = y1 - y0;
+  // rounded frame: concentric with the screen's corner radius, inset by the side margin
+  const rr = Math.max(0, Math.min(b * (S.corner || 0) / 100 - mx, fw / 2, fh / 2));
   let cell = 0.153 * b * S.cell;
   cell = Math.min(cell, fw / 3, fh / 3);
   const famAll = FONTS[S.font] || FONTS.sans;
@@ -234,9 +236,12 @@ export function build(S: State, opts?: { embed?: boolean; imports?: boolean }) {
       const c = '<circle cx="' + f(cx) + '" cy="' + f(cy) + '" r="' + f(n * step) + '"/>';
       if (n % 2 === 0) c2 += c; else a += c;
     }
-    defsSvg += '<clipPath id="cmFrame"><rect x="' + f(x0) + '" y="' + f(y0) + '" width="' + f(fw) + '" height="' + f(fh) + '"/></clipPath>';
     layerSvg += '<g clip-path="url(#cmFrame)"><g stroke-width="' + f(1 * q) + '" stroke-opacity="' + op(0.35) + '">' + a + '</g><g stroke-width="' + f(1.8 * q) + '" stroke-opacity="' + op(0.6) + '">' + c2 + '</g></g>';
     layerSvg += path(hLine(cy) + vLine(cx), 1.8, 0.6) + path(clip(cx, cy, 1, 1) + clip(cx, cy, 1, -1), 1.2, 0.45);
+  }
+
+  if (L.circle || rr > 0) {
+    defsSvg += '<clipPath id="cmFrame"><rect x="' + f(x0) + '" y="' + f(y0) + '" width="' + f(fw) + '" height="' + f(fh) + '"' + (rr > 0 ? ' rx="' + f(rr) + '"' : '') + '/></clipPath>';
   }
 
   if (L.grid || L.mm) {
@@ -363,14 +368,14 @@ export function build(S: State, opts?: { embed?: boolean; imports?: boolean }) {
     const gap = 16 * t, lmin = 5 * t, lmaj = 11 * t, fsz = 8.5 * t, pad = 4 * t;
     for (let i = i0; ox + i * m <= x1 + eps; i++) {
       const x = ox + i * m;
-      if (x < x0 - eps) continue;
+      if (x < x0 - eps || (rr > 0 && (x < x0 + rr - eps || x > x1 - rr + eps))) continue;
       const mj = i % sub === 0;
       ticks += 'M' + f(x) + ' ' + f(y0 - gap) + 'v' + f(-(mj ? lmaj : lmin));
       if (mj && i >= 0) nums += '<text x="' + f(x) + '" y="' + f(y0 - gap - lmaj - pad) + '" text-anchor="middle">' + (i / sub) + '</text>';
     }
     for (let i = i0; oy - i * m >= y0 - eps; i++) {
       const y = oy - i * m;
-      if (y > y1 + eps) continue;
+      if (y > y1 + eps || (rr > 0 && (y < y0 + rr - eps || y > y1 - rr + eps))) continue;
       const mj = i % sub === 0, len = mj ? lmaj : lmin;
       ticks += 'M' + f(x0 - gap) + ' ' + f(y) + 'h' + f(-len) + 'M' + f(x1 + gap) + ' ' + f(y) + 'h' + f(len);
       if (mj && i >= 0) {
@@ -436,11 +441,14 @@ export function build(S: State, opts?: { embed?: boolean; imports?: boolean }) {
     const fs = Math.max(7, cell * 0.058), lh = fs * 1.4;
     const fam = famAll;
     const len = Math.max(...lines.map(l => tw(l.toUpperCase(), fs, fam) * 1.07));
-    const lh2 = Math.min(fh, snY(y0 + len + cell * 0.45, false) - y0);
+    // with a rounded frame, push the text down until its left edge clears the curve
+    const lx = strip * 0.5 - lines.length * lh * 0.5, cy0 = lx < rr ? rr - Math.sqrt(rr * rr - (rr - lx) * (rr - lx)) : 0;
+    const top = Math.max(cell * 0.22, cy0 + cell * 0.12);
+    const lh2 = Math.min(fh, snY(y0 + top + len + cell * 0.23, false) - y0);
     if (plate) {
       labelSvg += '<rect x="' + f(x0) + '" y="' + f(y0) + '" width="' + f(strip - ie) + '" height="' + f(lh2 - ie) + '" fill="' + bg + '" stroke="none"/>';
     }
-    const bx = x0 + strip * 0.5 + (lines.length - 1) * lh * 0.5, by = y0 + cell * 0.22;
+    const bx = x0 + strip * 0.5 + (lines.length - 1) * lh * 0.5, by = y0 + top;
     let tsp = '';
     lines.forEach((l, i) => { tsp += '<tspan x="0" y="' + f(i * lh) + '">' + esc(l.toUpperCase()) + '</tspan>'; });
     labelSvg += '<g transform="translate(' + f(bx) + ' ' + f(by) + ') rotate(90)"><text font-family="' + fam + '" font-size="' + f(fs) + '" letter-spacing="' + f(fs * 0.07) + '" fill="' + ink + '" fill-opacity="' + op(0.85) + '">' + tsp + '</text></g>';
@@ -456,9 +464,9 @@ export function build(S: State, opts?: { embed?: boolean; imports?: boolean }) {
     if (css) svg += '<defs><style><![CDATA[' + css + ']]></style></defs>';
   }
   svg += '<rect width="' + W + '" height="' + H + '" fill="' + bg + '"/>';
-  svg += '<g fill="none" stroke="' + ink + '">' + (defsSvg ? '<defs>' + defsSvg + '</defs>' : '') + layerSvg + '</g>' + labelSvg;
+  svg += '<g fill="none" stroke="' + ink + '">' + (defsSvg ? '<defs>' + defsSvg + '</defs>' : '') + (rr > 0 ? '<g clip-path="url(#cmFrame)">' + layerSvg + '</g>' : layerSvg) + '</g>' + labelSvg;
   if (masks) svg += '<g fill="' + bg + '">' + masks + '</g>';
-  if (L.frame) svg += '<rect x="' + f(x0) + '" y="' + f(y0) + '" width="' + f(fw) + '" height="' + f(fh) + '" fill="none" stroke="' + ink + '" stroke-opacity="' + op(0.8) + '" stroke-width="' + f(2.4 * q) + '"/>';
+  if (L.frame) svg += '<rect x="' + f(x0) + '" y="' + f(y0) + '" width="' + f(fw) + '" height="' + f(fh) + '"' + (rr > 0 ? ' rx="' + f(rr) + '"' : '') + ' fill="none" stroke="' + ink + '" stroke-opacity="' + op(0.8) + '" stroke-width="' + f(2.4 * q) + '"/>';
   if (ticks) svg += '<path d="' + ticks + '" fill="none" stroke="' + ink + '" stroke-opacity="' + op(0.5) + '" stroke-width="' + f(1 * q) + '"/>';
   svg += nums + angLabels + fibText + texts;
   if (S.shadow) svg += shadowSVG(W, H, S.seed, S.shadowAmt, S.shadowStyle);

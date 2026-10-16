@@ -16,6 +16,7 @@ export interface State {
   ch: number;
   safeTop: number;
   safeBottom: number;
+  corner: number;
   cell: number;
   shadow: boolean;
   shadowAmt: number;
@@ -50,6 +51,7 @@ export const DEFAULT_STATE: State = {
   ch: 1600,
   safeTop: 4.5,
   safeBottom: 0,
+  corner: 0,
   cell: 0.95,
   shadow: false,
   shadowAmt: 70,
@@ -117,6 +119,13 @@ export const SAFE_PRESETS: [string, string, number, number][] = [
   ['phone', 'มือถือ', 7, 4],
 ];
 export const SAFE_MAX = 25;
+
+// Screen corner radius as % of the short side: [key, label, value]. The mat frame follows it concentrically.
+export const CORNER_PRESETS: [string, string, number][] = [
+  ['square', 'มุมฉาก', 0],
+  ['iphone', 'iPhone', 14.5],
+];
+export const CORNER_MAX = 25;
 
 export const SIZE_LIMITS = { min: 200, max: 12000 };
 
